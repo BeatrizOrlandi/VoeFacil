@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Cadastrar Voo - Aeroporto Manager{% endblock %}
+
+{% block content %}
+    <h2>Cadastrar Voo</h2>
+
+    <form method="post" action="{% url 'voo_create' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Salvar</button>
+    </form>
+{% endblock %}

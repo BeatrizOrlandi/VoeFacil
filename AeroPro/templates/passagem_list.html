@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Pilotos - Aeroporto Manager{% endblock %}
+
+{% block content %}
+    <h2>Lista de Passagens</h2>
+
+    {% for passagem in passagens %}
+        <p>{{ passagem.passageiro.nome }} - {{ passagem.origem }} to {{ passagem.destino }} ({{ passagem.status }})</p>
+    {% endfor %}
+    
+{% endblock %}

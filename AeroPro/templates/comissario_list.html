@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Comissários - Aeroporto Manager{% endblock %}
+
+{% block content %}
+    <h2>Lista de Comissários</h2>
+    <ul>
+        {% for comissario in comissarios %}
+            <li>{{ comissario.nome }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

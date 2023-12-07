@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Pilotos - Aeroporto Manager{% endblock %}
+
+{% block content %}
+    <h2>Lista de Pilotos</h2>
+    <ul>
+        {% for piloto in pilotos %}
+            <li>{{ piloto.nome }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

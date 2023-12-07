@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Aeroporto Manager{% endblock %}</title>
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        nav {
+            background-color: #4CAF50;
+            overflow: hidden;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        nav li {
+            float: left;
+        }
+
+        nav a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        section {
+            margin: 20px;
+        }
+
+        .flight-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px; /* Espaço entre os voos */
+        }
+
+        .flight-card {
+            border: 1px solid #ddd;
+            padding: 10px;
+            width: 280px;
+        }
+
+        .flight-card img {
+            width: 260px; /* Defina a largura máxima desejada para as imagens */
+            height: auto;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    {% block content %}{% endblock %}
+
+    <footer>
+        <p>&copy; {% now "Y" %} Aeroporto Manager</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<!-- companhia_aerea_list.html -->
+{% extends 'base.html' %}
+
+{% block title %}Lista de Companhias Aéreas - Aeroporto Manager{% endblock %}
+
+{% block content %}
+    <h2>Lista de Companhias Aéreas</h2>
+
+    <ul>
+        {% for companhia in companhias_aereas %}
+            <li>{{ companhia.nome }} - Sede: {{ companhia.sede }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

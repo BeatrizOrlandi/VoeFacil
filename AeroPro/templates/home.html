@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Cadastrar Comissário - Aeroporto Manager{% endblock %}
+
+{% block content %}
+<header>
+    <h1>Bem-vindo ao Aeroporto Manager</h1>
+    <p>Encontre e reserve suas passagens com facilidade</p>
+</header>
+
+<nav id="main-menu">
+    <ul>
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'piloto_list' %}">Pilotos</a></li>
+        <li><a href="{% url 'comissario_list' %}">Comissários</a></li>
+        <!-- Adicione mais links conforme necessário -->
+    </ul>
+</nav>
+
+<section id="search-section">
+    <h2>Buscar Passagens</h2>
+    <form method="GET" action="{% url 'home' %}">
+        <label for="origem">Origem:</label>
+        <input type="text" name="origem">
+
+        <label for="destino">Destino:</label>
+        <input type="text" name="destino">
+
+        <input type="submit" value="Buscar">
+    </form>
+</section>
+
+<section id="flight-list">
+    <h2>Passagens Disponíveis</h2>
+    <div class="flight-cards">
+        {% for voo in voos %}
+            <div class="flight-card">
+                <img src="{{ voo.url_imagem }}" alt="Imagem do voo">
+                <h3>{{ voo.origem }} para {{ voo.destino }}</h3>
+                <p>Data: {{ voo.data }} às {{ voo.horario }}</p>
+                <p>Valor: R$ {{ voo.valor }}</p>
+                <a href="{% url 'passagem_create' %}">
+                    <button>Comprar Passagem</button>
+                </a>
+            </div>
+            
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
