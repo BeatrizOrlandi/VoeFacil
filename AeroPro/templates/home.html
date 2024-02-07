@@ -1,21 +1,21 @@
 {% extends 'base.html' %}
 
-{% block title %}Cadastrar Comissário - Aeroporto Manager{% endblock %}
+{% load static %} 
+
+{% block title %}Voe{% endblock %}
 
 {% block content %}
-<header>
-    <h1>Bem-vindo ao Aeroporto Manager</h1>
-    <p>Encontre e reserve suas passagens com facilidade</p>
-</header>
-
 <nav id="main-menu">
     <ul>
         <li><a href="{% url 'home' %}">Home</a></li>
-        <li><a href="{% url 'piloto_list' %}">Pilotos</a></li>
-        <li><a href="{% url 'comissario_list' %}">Comissários</a></li>
-        <!-- Adicione mais links conforme necessário -->
+        <li><a href="{% url 'comissario_create' %}">Cadastrar Comissário</a></li>
+        <li><a href="{% url 'voo_create' %}">Cadastrar Voo</a></li>
+        <li><a href="{% url 'aeronave_create' %}">Cadastrar Aeronave</a></li>
+        <li><a href="{% url 'companhia_aerea_create' %}">Cadastrar Companhia Aérea</a></li>
     </ul>
 </nav>
+
+<header></header>
 
 <section id="search-section">
     <h2>Buscar Passagens</h2>
@@ -26,7 +26,7 @@
         <label for="destino">Destino:</label>
         <input type="text" name="destino">
 
-        <input type="submit" value="Buscar">
+        <input type="submit"  class="btn btn-primary" value="Buscar">
     </form>
 </section>
 
@@ -39,12 +39,19 @@
                 <h3>{{ voo.origem }} para {{ voo.destino }}</h3>
                 <p>Data: {{ voo.data }} às {{ voo.horario }}</p>
                 <p>Valor: R$ {{ voo.valor }}</p>
-                <a href="{% url 'passagem_create' %}">
-                    <button>Comprar Passagem</button>
+                <a href="{% url 'passagem_create' voo_id=voo.id %}">
+                    <button class="btn btn-primary">Comprar Passagem</button>
                 </a>
             </div>
-            
         {% endfor %}
     </div>
 </section>
+<style>
+    header {
+        background-image: url('{% static "/Explore_page-0001.jpg" %}');
+        background-size: cover;
+        background-position: center;
+        height: 90vh;  /* 100% da altura da tela */
+    }
+</style>
 {% endblock %}

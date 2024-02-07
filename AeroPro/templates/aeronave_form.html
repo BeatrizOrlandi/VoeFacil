@@ -4,11 +4,13 @@
 {% block title %}Cadastrar Aeronave - Aeroporto Manager{% endblock %}
 
 {% block content %}
+<div style="margin: 0 40px;">
     <h2>Cadastrar Aeronave</h2>
 
     <form method="post" action="{% url 'aeronave_create' %}">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Salvar</button>
+        <button class="btn btn-primary" type="submit">Salvar</button>
     </form>
+</div>
 {% endblock %}

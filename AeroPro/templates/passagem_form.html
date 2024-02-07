@@ -1,12 +1,63 @@
+<!-- passagem_form.html -->
 {% extends 'base.html' %}
 
 {% block content %}
 
-    <h2>Compra de Passagem</h2>
+<div class="container" style="margin: 0 40px;">
+    <h2>Compra de Passagem de {{ voo.origem }} para {{ voo.destino }}</h2>
 
-    <form method="post" action="">
+    <form method="get" action="" class="passagem-form">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Salvar</button>
+        
+        <label for="passagem">Escolha a Passagem:</label>
+        <select name="passagem" id="passagem" class="form-control">
+            {% for passagem in passagens_disponiveis %}
+                <option value="{{ passagem.id }}">{{ passagem.id }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <button type="submit" class="btn btn-primary">Selecionar</button>
     </form>
+
+    {% if passagem_selecionada %}
+        <hr>
+        <div class="passagem-detalhes">
+            <h3>Detalhes da Passagem Selecionada:</h3>
+            <form method="post" action="" class="confirmar-compra-form">
+                {% csrf_token %}
+                <label>Origem do Voo: {{ passagem_selecionada.origem }}</label><br>
+                <label>Destino do Voo: {{ passagem_selecionada.destino }}</label><br>
+                <label>Data da Viagem: {{ passagem_selecionada.data_viagem }}</label><br>
+                <label>Valor: {{ passagem_selecionada.valor }}</label><br>
+                <input type="hidden" name="passageiro" value="{{ passagem_selecionada.passageiro.id }}">
+                <input type="hidden" name="voo" value="{{ passagem_selecionada.voo.id }}">
+                <input type="hidden" name="disponivel" value="{{ passagem_selecionada.disponivel }}">
+                <input type="hidden" name="origem" value="{{ passagem_selecionada.origem }}">
+                <input type="hidden" name="destino" value="{{ passagem_selecionada.destino }}">
+                <input type="hidden" name="data_viagem" value="{{ passagem_selecionada.data_viagem }}">
+                <input type="hidden" name="data_compra" value="{{ passagem_selecionada.data_compra }}">
+                <input type="hidden" name="valor" value="{{ passagem_selecionada.valor }}">
+                <input type="hidden" name="descricao" value="{{ passagem_selecionada.descricao }}">
+                <hr>
+                <h3>Novo Passageiro</h3>
+                {{ form_passageiro.as_p }}  <!-- Renderizando o formulário de passageiro -->
+
+                <button type="submit" class="btn btn-success">Confirmar Compra</button>
+            </form>
+        </div>
+    {% endif %}
+
+    {% if errors %}
+        <div class="alert alert-danger">
+            <ul>
+                {% for field, error_list in errors %}
+                    {% for error in error_list %}
+                        <li>{{ field }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+</div>
+
 {% endblock %}

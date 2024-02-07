@@ -9,7 +9,6 @@ class Passageiro(models.Model):
     passaporte = models.CharField(max_length=20)
     email = models.EmailField()
     telefone = models.CharField(max_length=15)
-    # outros campos
 
     def __str__(self):
         return self.nome
@@ -18,7 +17,6 @@ class CompanhiaAerea(models.Model):
     nome = models.CharField(max_length=100)
     sede = models.CharField(max_length=100)
     website = models.URLField()
-    # outros campos
 
     def __str__(self):
         return self.nome
@@ -28,7 +26,6 @@ class Aeronave(models.Model):
     capacidade_passageiros = models.PositiveIntegerField()
     ano_fabricacao = models.PositiveIntegerField()
     companhia_aerea = models.ForeignKey(CompanhiaAerea, on_delete=models.CASCADE)
-    # outros campos
 
     def __str__(self):
         return f"{self.modelo} ({self.ano_fabricacao})"
@@ -37,7 +34,6 @@ class Piloto(models.Model):
     nome = models.CharField(max_length=100)
     certificado_piloto = models.CharField(max_length=20)
     aeronave_associada = models.ForeignKey(Aeronave, on_delete=models.SET_NULL, null=True, blank=True)
-    # outros campos
 
     def __str__(self):
         return self.nome
@@ -46,7 +42,6 @@ class Comissario(models.Model):
     nome = models.CharField(max_length=100)
     certificado_comissario = models.CharField(max_length=20)
     aeronave_associada = models.ForeignKey(Aeronave, on_delete=models.SET_NULL, null=True, blank=True)
-    # outros campos
 
     def __str__(self):
         return self.nome
@@ -55,7 +50,6 @@ class Funcionario(models.Model):
     nome = models.CharField(max_length=100)
     cargo = models.CharField(max_length=50)
     salario = models.DecimalField(max_digits=10, decimal_places=2)
-    # outros campos
 
     def __str__(self):
         return self.nome
@@ -82,7 +76,7 @@ class Passagem(models.Model):
     passageiro = models.ForeignKey(Passageiro, on_delete=models.CASCADE)
     voo = models.ForeignKey(Voo, on_delete=models.CASCADE, default=1) 
     valor = models.DecimalField(max_digits=10, decimal_places=2, default= 500)
-
+    disponivel = models.BooleanField(default=True)
     def save(self, *args, **kwargs):
         if not self.origem:
             self.origem = self.voo.origem
@@ -112,22 +106,26 @@ def create_default_passagens(sender, instance, created, **kwargs):
         for _ in range(20):
             # Criar um novo objeto Passageiro
             novo_passageiro = Passageiro.objects.create(
-                nome="Nome do Passageiro",  # Substitua pelo valor desejado
-                passaporte="Número do Passaporte",  # Substitua pelo valor desejado
-                email="exemplo@email.com",  # Substitua pelo valor desejado
-                telefone="123456789",  # Substitua pelo valor desejado
+                nome="", 
+                passaporte="", 
+                email="exemplo@email.com", 
+                telefone="123456789", 
             )
 
             # Adicionar o novo passageiro ao Voo
-            instance.passagens.create(
-                origem=instance.origem,
-                destino=instance.destino,
-                data_viagem=instance.data,
-                valor=instance.valor,
+            nova_passagem = instance.passagens.create(
                 passageiro=novo_passageiro,
             )
 
+            # Atualizar informações de origem, destino e data da passagem
+            nova_passagem.origem = instance.origem
+            nova_passagem.destino = instance.destino
+            nova_passagem.data_viagem = instance.data
+            nova_passagem.valor = instance.valor
+            nova_passagem.save()
+
 post_save.connect(create_default_passagens, sender=Voo)
+
 
 @receiver(post_save, sender=Passagem)
 def create_default_passageiro(sender, instance, created, **kwargs):

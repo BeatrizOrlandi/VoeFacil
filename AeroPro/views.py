@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
+from django.utils import timezone
 from .forms import *
 from .models import Piloto, Comissario, Aeronave, Passageiro, CompanhiaAerea, Funcionario, Passagem
 
@@ -159,18 +160,53 @@ class FuncionarioCreateView(View):
         return redirect('funcionario_list')
 
 class PassagemCreateView(View):
-    def get(self, request):
+    template_name = 'passagem_form.html'
+    
+    def get(self, request, voo_id):
+        voo = get_object_or_404(Voo, pk=voo_id)
+        passagens_disponiveis = Passagem.objects.filter(voos__id=voo.id, disponivel=True)
         form = PassagemForm()
-        return render(request, 'passagem_form.html', {'form': form})
+        passagem_selecionada = None
+        form_passageiro = None
 
-    def post(self, request):
+        if 'passagem' in request.GET:
+            passagem_id = request.GET['passagem']
+            passagem_selecionada = get_object_or_404(Passagem, id=passagem_id)
+            form = PassagemForm(instance=passagem_selecionada)
+            form_passageiro = PassageiroForm()  # Criando um formulário de passageiro vazio
+
+        return render(request, self.template_name, {
+            'form': form,
+            'passagens_disponiveis': passagens_disponiveis,
+            'passagem_selecionada': passagem_selecionada,
+            'voo': voo,
+            'form_passageiro': form_passageiro  # Enviando o formulário de passageiro para o template
+        })
+
+    def post(self, request, voo_id):
+        voo = get_object_or_404(Voo, pk=voo_id)
         form = PassagemForm(request.POST)
-        if form.is_valid():
+        form_passageiro = PassageiroForm(request.POST)
+        passagens_disponiveis = Passagem.objects.filter(voos__id=voo.id, disponivel=True)
+
+        if form_passageiro.is_valid() and form.is_valid():
+            passageiro = form_passageiro.save()
             passagem = form.save(commit=False)
-            # Faça ajustes ou lógica adicional se necessário
+            passagem.voo = voo
+            passagem.passageiro = passageiro.id
+            passagem.data_compra = timezone.now()
+            passagem.disponivel = False
             passagem.save()
-            return redirect('passagem_list')  # Redireciona para a lista de passagens
-        return render(request, 'passagem_form.html', {'form': form})
+            return redirect('passagem_list')
+
+        # Se os formulários não forem válidos, renderize o template novamente com os formulários e os dados do voo
+        return render(request, self.template_name, {
+            'form': form,
+            'form_passageiro': form_passageiro,
+            'passagens_disponiveis': passagens_disponiveis,
+            'voo': voo,
+            'errors': form.errors.items() 
+        })
 
 class PassagemListView(View):
     def get(self, request):
@@ -238,7 +274,16 @@ class VooCreateView(View):
     def post(self, request):
         form = VooForm(request.POST)
         if form.is_valid():
-            form.save()
+            novo_voo = form.save()
+
+            # Atualizar todas as passagens vinculadas a este voo
+            for passagem in novo_voo.passagens.all():
+                passagem.origem = novo_voo.origem
+                passagem.destino = novo_voo.destino
+                passagem.data_viagem = novo_voo.data
+                passagem.valor = novo_voo.valor
+                passagem.save()
+
             return redirect('home')
         return render(request, 'voo_form.html', {'form': form})
 
